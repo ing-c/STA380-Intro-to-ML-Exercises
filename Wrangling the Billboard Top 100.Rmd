@@ -1,0 +1,135 @@
+---
+title: "Exercises"
+author: "Carissa Ing"
+date: "`r Sys.Date()`"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+``` {r}
+# Load libraries
+library(readr)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+```
+
+## Wrangling the Billboard Top 100
+
+``` {r}
+billboard <- read_csv("billboard.csv") %>% 
+  select(performer, 
+         song,
+         year,
+         week,
+         week_position)
+```
+
+### Part A
+
+**Caption:** This table shows the ten most popular songs and their artists, ranked from most to least, based on the number of weeks each song was charting on the Billboard Top 100 chart.
+
+``` {r, message = FALSE}
+songs_charting <- billboard %>%
+  group_by(performer, song) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count))
+
+head(songs_charting, 10)
+```
+
+### Part B
+
+**Caption:** This graph maps the number of unique songs that appeared on the Billboard Top 100 chart per year from 1959 to 2020, serving as a measurement of musical diversity. There is a noticeable decline in the number of unique songs starting around 1970, reaching a minimum in 2001. Although there is a significant spike in musical diversity around 2010, the number of unique songs does not return to pre-1970 levels until 2019.
+
+``` {r, message = FALSE}
+songs_per_yr <- billboard %>% 
+  filter(!(year %in% c(1958, 2021))) %>%
+  group_by(year) %>% 
+  summarise(num_unique_songs = n_distinct(paste(performer, song)))
+
+ggplot(songs_per_yr, aes(x = year, y = num_unique_songs)) +
+  geom_line() +
+  labs(title = "Music Diversity in Billboard Top 100 Charts from 1959 - 2020", 
+       y = "Number of Unique Songs", 
+       x = "Year") +
+  theme_minimal()
+
+```
+
+### Part C
+
+**Caption:** This graph displays the top artists from 1958 to 2021 who have at least thirty songs that charted on the Billboard Top 100 for ten or more weeks. Elton John stands out with the highest number of charting songs, surpassing the second most popular artist by over ten songs.
+
+``` {r, message = FALSE}
+ten_week_artists <- songs_charting %>% 
+  filter(count >= 10) %>% #filter weeks charted >= 10
+  group_by(performer) %>% 
+  summarise(ten_week_hits = n()) %>% 
+  filter(ten_week_hits >= 30)
+
+ggplot(ten_week_artists, aes(fct_reorder(performer, ten_week_hits), ten_week_hits)) + 
+  geom_col() +
+  labs(title = "Top Artists (1958-2021) with 30+ Songs Each Charting 10+ Weeks", 
+       y = "Number of Songs that Charted for over 10 Weeks", 
+       x = "Artist") +
+  coord_flip() +
+  theme_minimal()
+```
+
+
+
+
+## Visual story telling part 1: green buildings
+
+
+
+
+
+
+
+
+
+
+
+## Visual story telling part 2: Capital Metro data
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
