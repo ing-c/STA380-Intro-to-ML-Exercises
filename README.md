@@ -45,6 +45,13 @@ Response [here](Q4/Visual-Story-Telling-Pt2-CapMetro.md).
 ## 5. Clustering and dimensionality reduction
 > Run PCA, tSNE, and any clustering algorithm of your choice on the 11 chemical properties (or suitable transformations thereof) and summarize your results. Which dimensionality reduction technique makes the most sense to you for this data? Convince yourself (and me) that your chosen approach is easily capable of distinguishing the reds from the whites, using only the "unsupervised" information contained in the data on chemical properties. Does your unsupervised technique also seem capable of distinguishing the higher from the lower quality wines? Present appropriate numerical and/or visual evidence to support your conclusions.
 
+Using PCA for clustering wine colors and t-SNE for clustering quality makes sense due to the differing complexity of each. The relationship between features and wine color is mostly linear, making PCA suitable. Conversely, the factors influencing wine quality are more complex and may require non-linear considerations, which is why t-SNE or a combination of PCA and t-SNE might be more effective. The results support this approach.
+
+The best model for predicting wine color was K-Means clustering after PCA, which accurately clustered about 98.5% of the wines into the correct color category. However, this method performed poorly for clustering wine quality, correctly labeling only about 12.4% of the data. Incorporating t-SNE improved the accuracy by about 6%, but 16% accuracy is still quite low. This suggests that the current unsupervised technique is not very effective at distinguishing wine quality. Feature engineering and/or binning of the quality scores may enhance the accuracy.
+
+Testing accuracy of clustering after PCA only [here](Q5/Clustering---Dimensionality-Reduction.md).
+
+Testing accuracy of clustering after PCA and tSNE [here](Q5/Clustering-&-Dimensionality-Reduction.ipynb).
 
 ## 6. Market segmentation
 > Your task to is analyze this data as you see fit, and to prepare a concise report for NutrientH20 that identifies any interesting market segments that appear to stand out in their social-media audience. You have complete freedom in deciding how to pre-process the data and how to define "market segment." (Is it a group of correlated interests? A cluster? A latent factor? Etc.) Just use the data to come up with some interesting, well-supported insights about the audience, and be clear about what you did.
