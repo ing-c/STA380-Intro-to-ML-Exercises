@@ -37,6 +37,8 @@ Response [here](Q2/Wrangling-the-Billboard-Top-100.md).
 ## 4. Visual story telling part 2: Capital Metro data
 > Your task is to create a figure, or set of related figures, that tell an interesting story about Capital Metro ridership patterns around the UT-Austin campus during the semester in question. Provide a clear annotation/caption for each figure, but the figure(s) should be more or less stand-alone, in that you shouldn't need many, many paragraphs to convey its meaning. Rather, the figure together with a concise caption should speak for itself as far as possible.
 
+Response [here](Q4/Visual-Story-Telling-Pt2-CapMetro.md).
+
 ## 5. Clustering and dimensionality reduction
 
 
