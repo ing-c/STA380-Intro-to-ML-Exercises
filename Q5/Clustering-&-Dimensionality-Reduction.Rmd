@@ -1,0 +1,109 @@
+---
+title: "PCA & Clustering"
+author: "Carissa Ing"
+date: "`r Sys.Date()`"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message=FALSE}
+library(readr)
+library(tidyverse)
+library(ClusterR)
+library(kernlab)
+```
+
+```{r, message=FALSE}
+wine <- read_csv("wine.csv") %>% 
+  mutate(color_num = ifelse(color == "white", 1, 2))
+```
+
+## Clustering by Red vs. White Wine After PCA
+
+### PCA for Feature Reduction
+
+```{r}
+pca_result = prcomp(wine[,1:11], center = TRUE, scale. = TRUE)
+summary(pca_result)
+```
+
+```{r}
+#Chose to use 7 PCs because proportion of variance explained begins to flatten
+pca_data = pca_result$x[, 1:7]
+```
+
+
+### K-Means Clustering
+
+```{r}
+set.seed(123)
+kmeans_result = kmeans(pca_data, centers = 2, nstart = 25)
+
+#FInd Accuracy:
+wine$kmeans_cluster = kmeans_result$cluster
+table(wine$color_num, wine$kmeans_cluster)
+accuracy = sum(wine$color_num == wine$kmeans_cluster) / nrow(wine)
+print(paste("Clustering Accuracy:", round(accuracy * 100, 2), "%"))
+
+```
+
+### Hierarchical Clustering
+
+```{r}
+distance_matrix = dist(pca_data)
+hc = hclust(distance_matrix, method = "average")
+hc_clusters = cutree(hc, k = 2)
+
+#Find Accuracy:
+wine$hc_cluster = hc_clusters
+table(wine$color_num, wine$hc_cluster)
+hc_accuracy = sum(wine$color_num == wine$hc_cluster) / nrow(wine)
+print(paste("Hierarchical Clustering Accuracy:", round(hc_accuracy * 100, 2), "%"))
+```
+
+Between K-Means clustering and hierarchical clustering methods, K-Means is superior in terms of accuracy, outperforming hierarchical clustering by over 20%.
+
+
+## Clustering by Wine Quality After PCA
+
+```{r}
+#find how many clusters
+summary(wine$quality)
+
+#adjust quality vals to match cluster assignments
+wine <- wine %>% 
+  mutate(quality_edit = quality - 2)
+```
+
+
+### K-Means Clustering
+
+```{r, warning=FALSE}
+set.seed(123)
+kmeans_result = kmeans(pca_data, centers = 7, nstart = 25)
+
+#FInd Accuracy:
+wine$kmeans_cluster = kmeans_result$cluster
+table(wine$quality_edit, wine$kmeans_cluster)
+accuracy = sum(wine$quality_edit == wine$kmeans_cluster) / nrow(wine)
+print(paste("Clustering Accuracy:", round(accuracy * 100, 2), "%"))
+```
+
+### Hierarchical Clustering
+
+```{r}
+distance_matrix = dist(pca_data)
+hc = hclust(distance_matrix, method = "average")
+hc_clusters = cutree(hc, k = 7)
+
+#Find Accuracy:
+wine$hc_cluster = hc_clusters
+table(wine$quality_edit, wine$hc_cluster)
+hc_accuracy = sum(wine$quality_edit == wine$hc_cluster) / nrow(wine)
+print(paste("Hierarchical Clustering Accuracy:", round(hc_accuracy * 100, 2), "%"))
+```
+
+When trying to create clusters to distinguish between wine qualities, K-Means performs over 100 times better than hierarchical clustering. In fact, hierarchical clustering performs exceptionally poorly, failing to cluster even 1% of the data accurately. Although K-Means does significantly better than hierarchical clustering, it still misclassifies over 85% of the wines. This suggests that further data wrangling and/or additional information may be necessary to differentiate between the qualities.
