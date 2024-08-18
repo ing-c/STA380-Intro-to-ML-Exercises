@@ -1,0 +1,188 @@
+---
+title: "Market Segmentation"
+author: "Carissa Ing"
+date: "`r Sys.Date()`"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message=FALSE, warning=FALSE}
+library(readr)
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(reshape2)
+library(cluster)
+```
+
+```{r, message=FALSE}
+social_marketing <- read_csv("social_marketing.csv") %>% 
+  select(-1) #remove row id
+```
+
+
+## Data Overview
+
+```{r}
+sum(is.na(social_marketing))
+summary(social_marketing)
+```
+
+
+## Data Cleaning & EDA
+
+```{r}
+remove_bots <- social_marketing %>% 
+  #Combine chatter and uncategorized
+  mutate(chatter = chatter + uncategorized) %>% 
+  select(-uncategorized) %>% 
+  #Remove bots (any user whose spam/chatter/adult tweets make up >50% of their categories)
+  mutate(
+    total_cat = rowSums(., na.rm = TRUE), 
+    bot_content_ratio = (spam + chatter + adult)/total_cat
+  ) %>% 
+  filter(bot_content_ratio < 0.5) %>% 
+  select(
+    -spam,
+    -chatter, 
+    -adult,
+    -total_cat, 
+    -bot_content_ratio)
+```
+
+```{r}
+#Correlation heatmap between predictors
+correlation_matrix <- cor(remove_bots, use = "pairwise.complete.obs")
+correlation_matrix_filtered <- ifelse(abs(correlation_matrix) > 0.8, correlation_matrix, 0)
+
+correlation_melt <- melt(correlation_matrix)
+ggplot(correlation_melt, aes(x = Var1, y = Var2, fill = value)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                       midpoint = 0, limit = c(-1, 1), name = "Correlation") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(x = "", y = "", title = "Heatmap of Correlations Between Predictors")
+```
+
+```{r}
+#combining some correlated and similarly-themed features
+sm <- remove_bots %>% 
+  mutate(
+    personal_health = health_nutrition + personal_fitness,
+    parenting_family = parenting + family,
+    news_politics = news + politics,
+    art_crafts = art + crafts,
+    sports = sports_fandom + sports_playing,
+    student = college_uni + school
+  ) %>% 
+  select(
+    -health_nutrition, -personal_fitness,
+    -parenting, -family,
+    -news, -politics,
+    -art, -crafts,
+    -sports_fandom, -sports_playing,
+    -college_uni, -school)
+
+```
+
+```{r}
+data_long <- sm %>% pivot_longer(everything(), names_to = "Category", values_to = "Followers")
+ggplot(data_long, aes(x = Category, y = Followers)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Distribution of Followers by Category", x = "Category", y = "Number of Followers Posting")
+```
+
+
+## Segmentation
+
+
+### K-Means Clustering
+
+```{r}
+sm_scaled <- scale(sm %>% select(-personal_health))
+
+#Choose # clusters with elbow curve
+wss <- sapply(1:10, function(k) {
+  kmeans(sm_scaled, centers = k, nstart = 10)$tot.withinss
+})
+
+plot(1:10, wss, type = "b", pch = 19, xlab = "Number of Clusters", ylab = "Total Within-Cluster Sum of Squares")
+```
+
+```{r}
+set.seed(5) # For reproducibility
+kmeans_result <- kmeans(sm_scaled, centers = 4, nstart = 25)
+
+# Add cluster assignments to the dataset
+sm$Cluster <- as.factor(kmeans_result$cluster)
+
+# Visualize the clusters (if using 2D or 3D PCA components for visualization)
+sm_pca <- prcomp(sm_scaled)
+sm$PC1 <- sm_pca$x[,1]
+sm$PC2 <- sm_pca$x[,2]
+
+ggplot(sm, aes(x = PC1, y = PC2, color = Cluster)) +
+  geom_point() +
+  labs(title = "K-Means Clustering of Users", x = "Principal Component 1", y = "Principal Component 2")
+
+```
+
+```{r}
+# View the cluster centers
+print(kmeans_result$centers)
+
+cluster_counts <- table(kmeans_result$cluster)
+cluster_ratios <- cluster_counts/nrow(sm)
+
+cluster_summary <- data.frame(
+  Cluster = names(cluster_counts),
+  Count = as.vector(cluster_counts),
+  Ratio = cluster_ratios
+)
+
+# Print the summary
+print(cluster_summary)
+```
+
+
+
+### Hierarchical CLustering
+
+```{r}
+dist_matrix <- dist(sm_scaled, method = "euclidean")
+
+hc <- hclust(dist_matrix, method = "average")
+
+clusters <- cutree(hc, k = 4)
+sm$Cluster_HC <- as.factor(clusters)
+
+```
+
+```{r}
+# Perform PCA for visualization
+pca_result <- prcomp(sm_scaled)
+sm$PC1 <- pca_result$x[, 1]
+sm$PC2 <- pca_result$x[, 2]
+
+# Plot clusters
+ggplot(sm, aes(x = PC1, y = PC2, color = Cluster_HC)) +
+  geom_point() +
+  labs(title = "Hierarchical Clustering of Users", x = "Principal Component 1", y = "Principal Component 2")
+
+```
+
+```{r}
+# Compute mean values for each cluster
+cluster_profiles <- sm %>%
+  group_by(Cluster_HC) %>%
+  summarise(across(starts_with("Category"), mean))
+
+print(cluster_profiles)
+
+```
+
