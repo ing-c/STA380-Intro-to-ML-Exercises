@@ -53,8 +53,57 @@ Testing accuracy of clustering after PCA only [here](Q5/Clustering---Dimensional
 
 Testing accuracy of clustering after PCA and tSNE [here](Q5/Clustering-&-Dimensionality-Reduction.ipynb).
 
+
 ## 6. Market segmentation
 > Your task to is analyze this data as you see fit, and to prepare a concise report for NutrientH20 that identifies any interesting market segments that appear to stand out in their social-media audience. You have complete freedom in deciding how to pre-process the data and how to define "market segment." (Is it a group of correlated interests? A cluster? A latent factor? Etc.) Just use the data to come up with some interesting, well-supported insights about the audience, and be clear about what you did.
+
+Code [here](Q6/Market-Segmentation.md).
+
+After conducting some EDA, I observed that the followers of NutritionH20 primarily seem to be interested in the personal health field (see *Distribution of Followers by Category* boxplot). Given that the company alias is NutritionH20, which suggests a focus on wellness, this observation aligns with expectations. My focus then shifted to exploring other interests of the followers. To achieve this, I performed both K-Means and hierarchical clustering using all predictors except for *personal_health* (an aggregation of the original variables *personal_fitness* and *health_nutrition*).
+
+By employing an elbow curve and experimenting with different numbers of clusters, I decided to segment the market into 4 categories. Hierarchical clustering did not yield meaningful results; it clustered the majority into one category and distributed the outliers into three other categories, regardless of the linkage function used. Therefore, I opted for K-Means clustering.
+
+The primary topics tweeted about by each of the 4 clusters are summarized as follows:
+
+**Cluster 1** (10% of data)
+- food
+- religion
+- family and parenting
+
+This cluster is most likely composed of Millennials and Gen Xers who have children and are exploring their spirituality.
+
+**Cluster 2** (8% of data)
+- sharing photos
+- cooking
+- beauty
+- fashion
+
+This cluster likely comprises women, given their interest in topics associated with femininity.
+
+**Cluster 3** (61% of data)
+- not very interested in anything
+
+Most of the dataset falls into this cluster. Followers in this cluster do not tend to tweet about any one subject more than others.
+
+**Cluster 4** (22% of data)
+- travel
+- tv/film
+- online gaming
+- shopping
+- computers
+- business
+- cars
+- dating
+- small businesses
+- news and politics
+- arts and crafts
+- school
+
+This cluster most likely groups Gen Z individuals. They frequently discuss topics related to school, leisure activities, and political/socio-economic issues.
+
+Although the majority of followers are in cluster 3, there are no clear topics that *NutritionH20* can use in their ads to engage this group effectively. This might indicate that a targeted approach towards a single category could be counterproductive. For instance, maintaining a politically neutral stance might be the best strategy for retaining this particular market segment. 
+
+The next largest cluster consists of Gen Z individuals. As this group is expected to become the predominant consumer base, it would be advantageous to start building brand loyalty with them now. To avoid alienating cluster 3, the company should focus on less controversial interests. Given the company's health-oriented focus, marketing to young people engaged in indoor activities (such as gaming, tech, TV, and arts and crafts) might be effective. Offering products that address the negative health effects associated with these activities could be a promising approach.
 
 
 ## 7. The Reuters corpus
