@@ -1,0 +1,65 @@
+---
+title: "Association Rule Mining"
+author: "Carissa Ing"
+date: "`r Sys.Date()`"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r,warning=FALSE}
+library(readr)
+library(tidyverse)
+library(igraph)
+library(arules)
+library(arulesViz)
+```
+
+## Prepping Data
+
+```{r}
+# Read the data from the text file
+groceries <- read_lines("groceries.txt")
+
+# Convert the data to a transactions object
+groceries_list <- strsplit(groceries, ",")
+groceries_list <- lapply(groceries_list, unique)
+groceries_trans <- as(groceries_list, "transactions")
+
+inspect(groceries_trans[1:5])
+summary(groceries_trans)
+```
+
+## Finding Association Rules
+
+I chose a support of 0.5% and a confidence of 90% because I wanted to focus on the stronger association rules that were verified about 10 times.
+
+```{r}
+grocery_rules <- apriori(groceries_trans, parameter = list(supp = 0.001, conf = 0.9))
+inspect(grocery_rules)
+```
+
+
+```{r, message=FALSE}
+plot(grocery_rules, col = rainbow(3))
+plot(grocery_rules, measure = c("support", "lift"), shading = "confidence", col = rainbow(3))
+```
+
+## Highest Lift
+
+```{r}
+inspect(subset(grocery_rules, subset=lift > 10))
+```
+
+The association rule with the highest lift was between purchasing liquor and red/blush wine and also buying bottled beer. About 0.2% of customers bought the former two, and if they did, 90% of the time, they also bought bottled beer—an 11x increase in the odds of bottled beer purchases. This explains why stores often keep their alcohol in the same area, as it encourages more sales.
+
+
+## Most Confident Rules
+
+There are 28 rules with 100% confidence, most of which involve whole milk. The general trend is that if someone has an egg/dairy or baking product in their basket, they are very likely to buy whole milk as well. Additionally, customers typically buy "other vegetables" when they already have some sort of fresh produce in their basket.
+
+```{r}
+inspect(subset(grocery_rules, subset=confidence == 1))
+```
