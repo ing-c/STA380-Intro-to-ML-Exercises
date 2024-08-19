@@ -117,12 +117,15 @@ The next largest cluster consists of Gen Z individuals. As this group is expecte
 > - Conclusion: What are your conclusions about your questions? Provide a written interpretation of your results, understandable to stakeholders who might plausibly take an interest in this data set.
 
 **Question**
+
 What main topics can we sort the documents in the Reuters corpus into?
 
 **Approach**
+
 I used K-Means to group the data into 7 clusters (based on the elbow curve) and then extracted the 15 most common non-stop words from each cluster.
 
 **Results**
+
 See [here](Q7/Reuters-Corpus.ipynb) for code and figures.
 
 The main topic of each cluster, which I identified by analyzing the common words, was:
@@ -145,12 +148,14 @@ The main topic of each cluster, which I identified by analyzing the common words
 Looking at the cluster plots using both PCA and t-SNE, we can see that the clusters are not entirely distinct—there's some overlap between them. In the PCA cluster plot, clusters 0-5 show some overlap, with the most significant overlap occurring between clusters 3 and 4, which are almost indistinguishable. In the t-SNE plot, the clusters are somewhat more spread out, except for cluster 0, which overlaps with all the others. The only cluster that clearly stands out is cluster 6, which is interesting considering that many of its most important words have meanings that overlap with those in other clusters.
 
 **Conclusion** 
+
 All of the documents in the Reuters corpus seem to discuss various aspects of the financial sector. Some focus on company shares and sales, others address specific industries like food and oil, while some explore interactions between international markets. The accumulation of such information can grow exponentially, so having a sorting method like clustering can help stakeholders better organize their information before making important financial decisions. The clustering method I chose is not entirely accurate, as there is significant overlap between topics in different clusters. This is partly because I did not use a token that accounts for all variations of the same financial terms. For example, the word "shares" can appear in these documents as "share," "shr," and "shrs," which are treated as separate words by the token I am using. By using a better token or consulting a financial expert to combine related tokens into single types, the filtering of words can be cleaner, leading to more accurate clusters. Once organized properly, stakeholders can more easily access the information they need without having to sift through the plethora of documents.
 
 
 ## 8. Association rule mining
 > Find some interesting association rules for these shopping baskets. The data file is a list of shopping baskets: one person's basket for each row, with multiple items per row separated by commas. Pick your own thresholds for lift and confidence; just be clear what these thresholds are and say why you picked them. Do your discovered item sets make sense? Present your discoveries in an interesting and visually appealing way.
 
+Response [here](Q8/Assoc-Rule-Mining.md).
 
 ## 9. Image classification with neural networks
 > Your job is to set up a neural network that can classify the images as accurately as possible. Use an 80/20 train test split. Summarize your model and its accuracy in any way you see fit, but make you include at a minimum the following elements:
