@@ -36,6 +36,18 @@ Response [here](Q2/Wrangling-the-Billboard-Top-100.md).
 > 
 > Do you agree with the conclusions of her on-staff stats guru? If so, point to evidence supporting his case. If not, explain specifically where and why the analysis goes wrong, and how it can be improved. Do you see the possibility of confounding variables for the relationship between rent and green status? If so, provide evidence for confounding, and see if you can also make a picture that visually shows how we might "adjust" for such a confounder. Tell your story in pictures, with appropriate introductory and supporting text.
 
+The analysis conducted by the stats guru appears to be solid, but it relies on several key assumptions:
+
+1. The square footage of a green building is approximately the same as that of a non-green building, implying that the green building would achieve similar profit margins for homes of the same size.
+2. Green buildings are expected to quickly reach full occupancy and maximize their profit potential each year.
+3. The median market rent for green buildings is actually $2.60 more per square feet than non-green buildings.
+
+My goal is to investigate whether these assumptions hold true and to assess how they may affect rental income. Additionally, I want to create clusters that are based on shared traits rather than geographically locations to provide a better prediction of rent prices of green and non-green buildings that are similar to one that the developer wants to construct. The purpose being to compare the profits of going green vs building a regular building. 
+
+See [here](Q3/Visual-Storytelling-Pt1.md) for my code and a walkthrough of my process and conclusion. 
+
+In summary, clustering revealed that a green building yields slightly higher rental income compared to a non-green building, meaning it would take approximately 2.44 years to recoup the additional 5% premium for constructing a green building—less than the stat guru predicted. This strongly supports his conclusion to proceed with the construction of the green building.
+
 
 ## 4. Visual story telling part 2: Capital Metro data
 > Your task is to create a figure, or set of related figures, that tell an interesting story about Capital Metro ridership patterns around the UT-Austin campus during the semester in question. Provide a clear annotation/caption for each figure, but the figure(s) should be more or less stand-alone, in that you shouldn't need many, many paragraphs to convey its meaning. Rather, the figure together with a concise caption should speak for itself as far as possible.
