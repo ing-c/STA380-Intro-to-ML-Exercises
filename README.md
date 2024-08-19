@@ -175,3 +175,6 @@ Response [here](Q8/Assoc-Rule-Mining.md).
 > - show some of the example images from the test set, together with your model's predicted classes.
 > - a confusion matrix showing the performance of the model on the set test, i.e. a table that cross-tabulates each test set example by (actual class, predicted class).
 
+See code and accuracy [here](Q9/Image-Classification.ipynb).
+
+This neural network is designed to classify satellite images into one of 11 land use categories. The network has three main layers: convolutional layers that detect patterns and features in the images, a pooling layer that reduces the size of the data while keeping important information, and fully connected layers that make the final predictions based on the features. The hyperparameters include the number of filters in the convolutional layers (32, 64, and 128), the size of the filters (3x3), and the learning rate (0.001) that controls how quickly the model learns. These settings help the network learn and make accurate predictions from the images. 
